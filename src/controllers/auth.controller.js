@@ -1,14 +1,5 @@
 const bcrypt = require('bcrypt');
 const { userService } = require('../services');
-const { findAll } = require('../services/user.service');
-
-async function test(req, res) {
-  const users = await findAll();
-
-  res.json({
-    data: { users },
-  });
-}
 
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function login(req, res) {
@@ -74,7 +65,6 @@ async function register(req, res) {
 }
 
 module.exports = {
-  test,
   login,
   register,
 };
