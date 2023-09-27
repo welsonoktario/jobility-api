@@ -7,15 +7,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Gender {
+  Male
+  Female
+}
+
+enum Disability {
+  Blindness
+  Deafness
+}
+
+enum Status {
+  Pending
+  Failed
+  Success
+}
+
+enum JobType {
+  Fulltime
+  Contract
+  Internship
+  Parttime
+  Temporary
+  FreshGraduate
+  Subcontract
+}
+
+enum JobSystem {
+  Onsite
+  Remote
+}
+
 model User {
-  id        Int       @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id              Int         @id @default(autoincrement())
+  email           String      @unique
+  password        String
+  fullname        String
+  profile_picture String?
+  gender          Gender
+  disability      Disability?
+  skills          String?
+  education       String?
+  experience      String?
+  certification   String?
+  preferred_job   String?
+  linked_accounts String?
+  contact         String?
+  cv              String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime?
 
   @@map("users")
+}
+
+model Application {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  jobId        Int
+  status       Status
+  cover_letter String?
+  date_applied DateTime
+
+  @@map("applications")
+}
+
+model Job {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String
+  type          JobType
+  system        JobSystem
+  location      String
+  salary        Int
+  requirement   String?
+  date_posted   DateTime
+  date_closed   DateTime?
+  jobcategoryId Int
+  companyId     Int
+
+  @@map("jobs")
+}
+
+model JobCategory {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@map("job_categories")
+}
+
+model Company {
+  id          Int     @id @default(autoincrement())
+  name        String
+  logo        String?
+  description String?
+  location    String?
+  industry    String?
+  links       String?
+  contact     String?
+
+  @@map("companies")
 }
