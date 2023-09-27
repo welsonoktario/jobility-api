@@ -13,14 +13,23 @@ enum Gender {
 }
 
 enum Disability {
-  Blindness
+  ColorBlindness
+  PartialBlindness
+  FullBlindness
+  Dyslexia
+  HearingLoss
   Deafness
+  PhysicalImpairment
 }
 
 enum Status {
   Pending
-  Failed
-  Success
+  OnReview
+  Accepted
+  Rejected
+  Withdrawn
+  Hired
+  Expired
 }
 
 enum JobType {
@@ -36,11 +45,12 @@ enum JobType {
 enum JobSystem {
   Onsite
   Remote
+  Hybrid
 }
 
 model User {
-  id              Int         @id @default(autoincrement())
-  email           String      @unique
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
   password        String
   fullname        String
   profile_picture String?
@@ -54,16 +64,19 @@ model User {
   linked_accounts String?
   contact         String?
   cv              String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   deletedAt       DateTime?
+  Application     Application[]
 
   @@map("users")
 }
 
 model Application {
   id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [userId], references: [id])
   userId       Int
+  job          Job      @relation(fields: [jobId], references: [id])
   jobId        Int
   status       Status
   cover_letter String?
@@ -73,7 +86,7 @@ model Application {
 }
 
 model Job {
-  id            Int       @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   title         String
   description   String
   type          JobType
@@ -83,8 +96,11 @@ model Job {
   requirement   String?
   date_posted   DateTime
   date_closed   DateTime?
+  jobcategory   JobCategory   @relation(fields: [jobcategoryId], references: [id])
   jobcategoryId Int
+  company       Company       @relation(fields: [companyId], references: [id])
   companyId     Int
+  Application   Application[]
 
   @@map("jobs")
 }
@@ -92,6 +108,7 @@ model Job {
 model JobCategory {
   id   Int    @id @default(autoincrement())
   name String
+  jobs Job[]
 
   @@map("job_categories")
 }
@@ -105,6 +122,7 @@ model Company {
   industry    String?
   links       String?
   contact     String?
+  jobs        Job[]
 
   @@map("companies")
 }
