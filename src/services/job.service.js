@@ -1,16 +1,13 @@
-const { PrismaClient } = require('@prisma/client')
+const prisma = require('../config/prisma');
 
-const prisma = new PrismaClient()
-
-  async function findAll() {
-    const jobs = await prisma.job.findMany();
-  
-    return jobs;
-  }
+async function findAll() {
+  const jobs = await prisma.job.findMany();
+  return jobs;
+}
 
 async function find(id) {
   // Parse the `id` parameter as an integer
-  const jobId = parseInt(id, 10);
+  const jobId = parseInt(id);
 
   // Check if `jobId` is a valid integer
   if (isNaN(jobId)) {
@@ -36,27 +33,38 @@ async function create(data) {
 }
 
 async function update(id, data) {
-  return prisma.job.update({
+  const jobId = parseInt(id);
+
+  if (isNaN(jobId)) {
+    throw new Error('Invalid job ID');
+  }
+  const job = await prisma.job.update({
     where: {
-      id,
+      id: jobId,
     },
     data,
   });
+  return job;
 }
 
 async function destroy(id) {
-  return prisma.job.delete({
+  const jobId = parseInt(id);
+
+  if (isNaN(jobId)) {
+    throw new Error('Invalid job ID');
+  }
+  const job = await prisma.job.delete({
     where: {
-      id,
+      id: jobId,
     },
   });
+  return job;
 }
 
-
-module.exports = { 
-  findAll, 
-  find, 
-  create, 
-  update, 
-  destroy 
+module.exports = {
+  findAll,
+  find,
+  create,
+  update,
+  destroy,
 };
