@@ -54,7 +54,7 @@ model User {
   password        String
   fullname        String
   profile_picture String?
-  gender          Gender
+  gender          Gender?
   disability      Disability?
   skills          String?
   education       String?
