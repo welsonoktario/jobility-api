@@ -33,7 +33,7 @@ async function login(req, res) {
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function register(req, res) {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { fullname, email, password } = req.body;
 
     const exists = await userService.findByEmail(email);
 
@@ -44,8 +44,7 @@ async function register(req, res) {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
     const user = await userService.create({
-      firstName,
-      lastName,
+      fullname,
       email,
       password: passwordHash,
     });
