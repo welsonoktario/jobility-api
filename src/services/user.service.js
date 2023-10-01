@@ -17,13 +17,17 @@ async function find(id) {
 }
 
 async function findByEmail(email) {
-  const user = await prisma.user.findFirstOrThrow({
+  const user = await prisma.user.findFirst({
     where: {
       email,
     },
   });
 
-  return user;
+  if (user) {
+    return user;
+  }
+
+  return null;
 }
 
 async function create(data) {
