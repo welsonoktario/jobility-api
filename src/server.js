@@ -22,8 +22,8 @@ app.use(logger);
 
 // Routing
 app.use('/auth', authRoutes);
-app.use("/job", jobRoutes)
-app.use("/categories", jobcategoriesRoutes)
+app.use('/job', jobRoutes);
+app.use('/categories', jobcategoriesRoutes);
 // ...
 
 prisma

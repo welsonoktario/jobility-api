@@ -6,15 +6,12 @@ async function findAll() {
 }
 
 async function find(id) {
-  // Parse the `id` parameter as an integer
-  const jobcategoryId = parseInt(id);
+  const jobcategoryId = parseInt(id, 10);
 
-  // Check if `jobcategoryId` is a valid integer
-  if (isNaN(jobcategoryId)) {
+  if (Number.isNaN(jobcategoryId)) {
     throw new Error('Invalid jobcategory ID');
   }
 
-  // Use `jobcategoryId` in the query
   const jobcategory = await prisma.jobCategory.findFirstOrThrow({
     where: {
       id: jobcategoryId,
@@ -25,14 +22,14 @@ async function find(id) {
 }
 
 async function findjob(id) {
-  const jobcategoryId = parseInt(id);
+  const jobcategoryId = parseInt(id, 10);
 
-  if (isNaN(jobcategoryId)) {
+  if (Number.isNaN(jobcategoryId)) {
     throw new Error('Invalid Category ID');
   }
-  const jobcategory = await prisma.job.findMany({ 
+  const jobcategory = await prisma.job.findMany({
     where: {
-      jobcategoryId: jobcategoryId,
+      jobcategoryId,
     },
   });
 
@@ -48,9 +45,9 @@ async function create(data) {
 }
 
 async function update(id, data) {
-  const jobcategoryId = parseInt(id);
+  const jobcategoryId = parseInt(id, 10);
 
-  if (isNaN(jobcategoryId)) {
+  if (Number.isNaN(jobcategoryId)) {
     throw new Error('Invalid jobcategory ID');
   }
   const jobcategory = await prisma.jobCategory.update({
@@ -63,9 +60,9 @@ async function update(id, data) {
 }
 
 async function destroy(id) {
-  const jobcategoryId = parseInt(id);
+  const jobcategoryId = parseInt(id, 10);
 
-  if (isNaN(jobcategoryId)) {
+  if (Number.isNaN(jobcategoryId)) {
     throw new Error('Invalid jobcategory ID');
   }
   const jobcategory = await prisma.jobCategory.delete({
