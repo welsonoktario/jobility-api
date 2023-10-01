@@ -37,6 +37,18 @@ async function findjob(id) {
 }
 
 async function create(data) {
+  const { name } = data;
+
+  const isExists = await prisma.jobCategory.findFirst({
+    where: {
+      name,
+    },
+  });
+
+  if (isExists) {
+    throw new Error('Job category already exists');
+  }
+
   const jobcategory = await prisma.jobCategory.create({
     data,
   });
