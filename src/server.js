@@ -6,7 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const { logger } = require('./utils');
 const { prisma } = require('./config');
-const { authRoutes, jobRoutes, jobcategoriesRoutes } = require('./routes');
+const { authRoutes, jobRoutes, jobcategoriesRoutes, applicationRoutes } = require('./routes');
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use(logger);
 app.use('/auth', authRoutes);
 app.use('/job', jobRoutes);
 app.use('/categories', jobcategoriesRoutes);
+app.use('/application', applicationRoutes);
 // ...
 
 prisma
