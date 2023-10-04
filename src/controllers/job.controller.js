@@ -51,8 +51,8 @@ async function create(req, res) {
       location,
       salary,
       requirement,
-      date_posted,
-      date_closed,
+      datePosted,
+      dateClosed,
       jobcategoryId,
       companyId,
     } = req.body;
@@ -64,8 +64,8 @@ async function create(req, res) {
       location,
       salary,
       requirement,
-      date_posted,
-      date_closed,
+      datePosted,
+      dateClosed,
       jobcategoryId,
       companyId,
     });
@@ -95,8 +95,8 @@ async function update(req, res) {
       location,
       salary,
       requirement,
-      date_posted,
-      date_closed,
+      datePosted,
+      dateClosed,
       jobcategoryId,
       companyId,
     } = req.body;
@@ -108,8 +108,8 @@ async function update(req, res) {
       location,
       salary,
       requirement,
-      date_posted,
-      date_closed,
+      datePosted,
+      dateClosed,
       jobcategoryId,
       companyId,
     });
