@@ -12,16 +12,6 @@ enum Gender {
   Female
 }
 
-enum Disability {
-  ColorBlindness
-  PartialBlindness
-  FullBlindness
-  Dyslexia
-  HearingLoss
-  Deafness
-  PhysicalImpairment
-}
-
 enum Status {
   Pending
   OnReview
@@ -55,7 +45,8 @@ model User {
   fullname       String
   profilePicture String?
   gender         Gender?
-  disability     Disability?
+  disability     Disability?    @relation(fields: [disabilityId], references: [id])
+  disabilityId   Int?
   skills         String?
   education      String?
   experience     String?
@@ -101,6 +92,8 @@ model Job {
   company       Company       @relation(fields: [companyId], references: [id])
   companyId     Int
   Application   Application[]
+  disability    Disability    @relation(fields: [disabilityId], references: [id])
+  disabilityId  Int
 
   @@map("jobs")
 }
@@ -125,4 +118,13 @@ model Company {
   jobs        Job[]
 
   @@map("companies")
+}
+
+model Disability {
+  id   Int    @id @default(autoincrement())
+  name String 
+  User User[]
+  Job  Job[]
+
+  @@map("disability")
 }
