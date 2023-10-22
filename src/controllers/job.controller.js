@@ -7,7 +7,7 @@ async function findAll(req, res) {
       throw new Error('No jobs found');
     } else {
       res.status(200).json({
-        status: 'success',
+        status: 'ok',
         data: job,
       });
     }
@@ -24,7 +24,7 @@ async function find(req, res) {
     const { id } = req.params;
     const job = await jobService.find(id);
     res.status(200).json({
-      status: 'success',
+      status: 'ok',
       data: job,
     });
   } catch (err) {
@@ -64,7 +64,7 @@ async function create(req, res) {
       companyId,
     });
     res.status(201).json({
-      status: 'success',
+      status: 'ok',
       data: job,
     });
   } catch (err) {
@@ -105,7 +105,7 @@ async function update(req, res) {
       companyId,
     });
     res.status(200).json({
-      status: 'success',
+      status: 'ok',
       data: job,
     });
   } catch (err) {
@@ -121,7 +121,7 @@ async function destroy(req, res) {
     const { id } = req.params;
     await jobService.destroy(id);
     res.status(200).json({
-      status: 'success',
+      status: 'ok',
       message: 'Successfully deleted a job',
     });
   } catch (err) {
