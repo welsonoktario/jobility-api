@@ -35,6 +35,22 @@ async function find(req, res) {
   }
 }
 
+async function search(req, res) {
+  try {
+    const filters = req.query;
+    const job = await jobService.search(filters);
+    res.status(200).json({
+      status: 'ok',
+      data: job,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: `Failed to search jobs. msg: ${err.message}`,
+    });
+  }
+}
+
 async function create(req, res) {
   try {
     const {
@@ -135,6 +151,7 @@ async function destroy(req, res) {
 module.exports = {
   findAll,
   find,
+  search,
   create,
   update,
   destroy,

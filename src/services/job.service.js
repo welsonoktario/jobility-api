@@ -21,6 +21,46 @@ async function find(id) {
   return job;
 }
 
+async function search(filters) {
+  const whereClause = {};
+
+  if (!filters) return findAll();
+
+  if (filters.title) {
+    whereClause.title = {
+      contains: filters.title,
+    };
+  }
+
+  if (filters.companyId) {
+    whereClause.companyId = parseInt(filters.companyId, 10);
+  }
+
+  if (filters.location) {
+    whereClause.location = {
+      contains: filters.location,
+    };
+  }
+
+  if (filters.disabilityId) {
+    whereClause.disabilityId = parseInt(filters.disabilityId, 10);
+  }
+
+  if (filters.type) {
+    whereClause.type = filters.type;
+  }
+
+  if (filters.system) {
+    whereClause.system = filters.system;
+  }
+
+  const job = await prisma.job.findMany({
+    where: whereClause,
+  });
+
+  return job;
+}
+
 async function create(data) {
   const job = await prisma.job.create({
     data,
@@ -61,6 +101,7 @@ async function destroy(id) {
 module.exports = {
   findAll,
   find,
+  search,
   create,
   update,
   destroy,
