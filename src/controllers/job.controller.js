@@ -2,13 +2,21 @@ const { jobService } = require('../services');
 
 async function findAll(req, res) {
   try {
-    const job = await jobService.findAll();
-    if (job.length === 0) {
+    const page = parseInt(req.query.page, 10) || 1;
+    const pageSize = parseInt(req.query.pageSize, 10) || 12;
+
+    const job = await jobService.findAll(page, pageSize);
+
+    if (job.data.length === 0) {
       throw new Error('No jobs found');
     } else {
       res.status(200).json({
         status: 'ok',
-        data: job,
+        data: job.data,
+        totalJobs: job.totalJobs,
+        jobsPerPage: job.jobsPerPage,
+        currentPage: job.currentPage,
+        totalPages: job.totalPages,
       });
     }
   } catch (err) {
@@ -38,11 +46,22 @@ async function find(req, res) {
 async function search(req, res) {
   try {
     const filters = req.query;
-    const job = await jobService.search(filters);
-    res.status(200).json({
-      status: 'ok',
-      data: job,
-    });
+    const page = parseInt(req.query.page, 10) || 1;
+    const pageSize = parseInt(req.query.pageSize, 10) || 12;
+    
+    const job = await jobService.search(filters, page, pageSize);
+    if (job.data.length === 0) {
+      throw new Error('No jobs found');
+    } else {
+      res.status(200).json({
+        status: 'ok',
+        data: job.data,
+        totalJobs: job.totalJobs,
+        jobsPerPage: job.jobsPerPage,
+        currentPage: job.currentPage,
+        totalPages: job.totalPages,
+      });
+    }
   } catch (err) {
     res.status(500).json({
       status: 'error',
