@@ -1,9 +1,13 @@
+const env = process.env.NODE_ENV.toLocaleLowerCase();
 const dotEnv = require('dotenv');
 
-dotEnv.config();
+dotEnv.config({
+  path: `.env.${env}`, // .env.development or .env.production based on NODE_ENV
+});
 
 const express = require('express');
 const cors = require('cors');
+
 const { logger } = require('./utils');
 const { prisma } = require('./config');
 const {
@@ -15,6 +19,8 @@ const {
 } = require('./routes');
 
 const app = express();
+const port = process.env.port || process.env.APP_PORT;
+const host = process.env.APP_URL;
 
 // Middlewares
 app.use(
@@ -38,10 +44,16 @@ prisma
   .$connect()
   .then(() => {
     console.log('Connection has been established successfully.');
-    app.listen(process.env.APP_PORT, () => {
-      console.log(`Server running on: http://localhost:${process.env.APP_PORT}`);
-    });
+
+    if (env === 'production') {
+      app.listen();
+    } else {
+      app.listen(port, () => {
+        console.log(`Server running on: ${host}:${port}`);
+      });
+    }
   })
   .catch((err) => {
+    logger(err);
     console.error(err);
   });
