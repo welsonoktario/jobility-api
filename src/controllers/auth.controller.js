@@ -59,7 +59,7 @@ async function login(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -109,7 +109,7 @@ async function register(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }

@@ -9,20 +9,20 @@ async function findAll(req, res) {
 
     if (job.data.length === 0) {
       throw new Error('No jobs found');
-    } else {
-      res.status(200).json({
-        status: 'ok',
-        data: job.data,
-        totalJobs: job.totalJobs,
-        jobsPerPage: job.jobsPerPage,
-        currentPage: job.currentPage,
-        totalPages: job.totalPages,
-      });
     }
+
+    res.status(200).json({
+      status: 'ok',
+      data: job.data,
+      totalJobs: job.totalJobs,
+      jobsPerPage: job.jobsPerPage,
+      currentPage: job.currentPage,
+      totalPages: job.totalPages,
+    });
   } catch (err) {
     res.status(500).json({
       status: 'error',
-      message: 'Failed to get all jobs',
+      message: err.message,
     });
   }
 }
@@ -48,7 +48,7 @@ async function search(req, res) {
     const filters = req.query;
     const page = parseInt(req.query.page, 10) || 1;
     const pageSize = parseInt(req.query.pageSize, 10) || 12;
-    
+
     const job = await jobService.search(filters, page, pageSize);
     if (job.data.length === 0) {
       throw new Error('No jobs found');
@@ -95,8 +95,12 @@ async function create(req, res) {
       requirement,
       datePosted,
       dateClosed,
-      jobcategoryId,
-      companyId,
+      jobcategory: {
+        connect: { id: jobcategoryId },
+      },
+      company: {
+        connect: { id: companyId },
+      },
     });
     res.status(201).json({
       status: 'ok',

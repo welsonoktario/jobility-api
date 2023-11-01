@@ -17,7 +17,7 @@ async function findAll(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -36,7 +36,7 @@ async function find(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -55,7 +55,7 @@ async function findjob(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -76,7 +76,7 @@ async function create(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -98,7 +98,7 @@ async function update(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -117,7 +117,7 @@ async function destroy(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }

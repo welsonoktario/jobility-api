@@ -3,21 +3,22 @@ const { applicationService } = require('../services');
 async function findAll(req, res) {
   try {
     const applications = await applicationService.findAll();
+
     if (applications.length === 0) {
       throw new Error('No applications found');
-    } else {
-      res.status(200).json({
-        status: 'ok',
-        msg: 'Successfully retrieved applications data',
-        data: {
-          applications,
-        },
-      });
     }
+
+    res.status(200).json({
+      status: 'ok',
+      msg: 'Successfully retrieved applications data',
+      data: {
+        applications,
+      },
+    });
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -36,7 +37,7 @@ async function find(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -61,7 +62,7 @@ async function create(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -85,7 +86,7 @@ async function update(req, res) {
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
