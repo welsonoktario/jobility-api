@@ -25,8 +25,35 @@ async function login(req, res) {
 
     const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
 
+    const {
+      id,
+      profilePicture,
+      gender,
+      disabilityId,
+      skills,
+      experience,
+      certification,
+      preferredJob,
+      linkedAccounts,
+      contact,
+      cv,
+    } = user;
+
     res.status(200).json({
       status: 'ok',
+      user: {
+        id,
+        profilePicture,
+        gender,
+        disabilityId,
+        skills,
+        experience,
+        certification,
+        preferredJob,
+        linkedAccounts,
+        contact,
+        cv,
+      },
       token,
     });
   } catch (err) {
@@ -51,7 +78,7 @@ async function register(req, res) {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
 
-    await userService.create({
+    const user = await userService.create({
       fullname,
       email,
       password: passwordHash,
@@ -59,8 +86,24 @@ async function register(req, res) {
 
     const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
 
+    // eslint-disable-next-line max-len
+    const { id, profilePicture, gender, disabilityId, skills, experience, certification, preferredJob, linkedAccounts, contact, cv } = user;
+
     res.status(200).json({
       status: 'ok',
+      user: {
+        id,
+        profilePicture,
+        gender,
+        disabilityId,
+        skills,
+        experience,
+        certification,
+        preferredJob,
+        linkedAccounts,
+        contact,
+        cv,
+      },
       token,
     });
   } catch (err) {
