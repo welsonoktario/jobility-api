@@ -92,8 +92,8 @@ model Job {
   company       Company       @relation(fields: [companyId], references: [id])
   companyId     Int
   Application   Application[]
-  disability    Disability    @relation(fields: [disabilityId], references: [id])
-  disabilityId  Int
+  disability    Disability?    @relation(fields: [disabilityId], references: [id])
+  disabilityId  Int?
 
   @@map("jobs")
 }
