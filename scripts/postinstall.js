@@ -2,9 +2,9 @@ const fs = require('fs');
 const crypto = require('crypto');
 
 // Check if NODE_ENV is set to "production"
-const nodeEnv = process.env.NODE_ENV || '';
+const nodeEnv = process.env.NODE_ENV;
 
-if (nodeEnv.trim().toLowerCase() === 'production') {
+if (nodeEnv && nodeEnv.trim().toLowerCase() === 'production') {
   // Generate a new SECRET_KEY
   const keyLengthInBytes = 32; // 256 bits for a strong secret key
   const secretKey = crypto.randomBytes(keyLengthInBytes).toString('hex');
