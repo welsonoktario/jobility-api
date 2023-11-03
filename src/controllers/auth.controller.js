@@ -1,11 +1,78 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const { userService } = require('../services');
+const exclude = require('../utils/exclude');
 
 const secretKey = process.env.SECRET_KEY;
 
-// Pindahin logic ini ke service? (ex: auth.service.js)
-async function login(req, res) {
+async function login(req, res, next) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+
+    if (!user) {
+      res.status(500).json({
+        status: 'fail',
+        message: info.message,
+      });
+    }
+
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        return next(loginErr);
+      }
+
+      return res.status(200).json({
+        status: 'ok',
+        message: 'Login success',
+        data: exclude(user, ['password', 'createdAt', 'updatedAt', 'deletedAt']),
+      });
+    });
+  })(req, res, next);
+}
+
+async function loginJwt(req, res, next) {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+
+    if (!user) {
+      res.status(500).json({
+        status: 'fail',
+        message: info.message,
+      });
+    }
+
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        return next(loginErr);
+      }
+
+      passport.authenticate('jwt', { session: false }, async (jwtAuthErr) => {
+        if (jwtAuthErr || !user) {
+          return res.status(500).json({ status: 'fail', message: 'Authentication failed' });
+        }
+
+        const token = jwt.sign({ fullname: user.fullname }, process.env.SECRET_KEY, {
+          expiresIn: '1h',
+        });
+
+        return res.status(200).json({
+          status: 'ok',
+          data: {
+            user: exclude(user, ['password', 'createdAt', 'updatedAt', 'deletedAt']),
+            token,
+          },
+        });
+      })(req, res);
+    });
+  })(req, res, next);
+}
+
+/* async function loginJWT(req, res) {
   try {
     const { email, password } = req.body;
 
@@ -62,7 +129,7 @@ async function login(req, res) {
       message: err.message,
     });
   }
-}
+} */
 
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function register(req, res) {
@@ -87,7 +154,19 @@ async function register(req, res) {
     const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
 
     // eslint-disable-next-line max-len
-    const { id, profilePicture, gender, disabilityId, skills, experience, certification, preferredJob, linkedAccounts, contact, cv } = user;
+    const {
+      id,
+      profilePicture,
+      gender,
+      disabilityId,
+      skills,
+      experience,
+      certification,
+      preferredJob,
+      linkedAccounts,
+      contact,
+      cv,
+    } = user;
 
     res.status(200).json({
       status: 'ok',
@@ -116,5 +195,6 @@ async function register(req, res) {
 
 module.exports = {
   login,
+  loginJwt,
   register,
 };

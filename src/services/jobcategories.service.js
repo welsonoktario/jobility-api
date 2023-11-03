@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma');
+const prisma = require('../utils/lib/prisma');
 
 async function findAll() {
   const jobcategories = await prisma.jobCategory.findMany();

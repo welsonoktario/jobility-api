@@ -6,10 +6,11 @@ dotEnv.config({
 });
 
 const express = require('express');
+const session = require('express-session');
 const cors = require('cors');
 
 const { logger } = require('./utils');
-const { prisma } = require('./config');
+const { passport, prisma } = require('./utils/lib');
 const {
   authRoutes,
   jobRoutes,
@@ -31,6 +32,9 @@ app.use(
 );
 app.use(express.json());
 app.use(logger);
+app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routing
 app.use('/auth', authRoutes);
@@ -54,6 +58,5 @@ prisma
     }
   })
   .catch((err) => {
-    logger(err);
     console.error(err);
   });

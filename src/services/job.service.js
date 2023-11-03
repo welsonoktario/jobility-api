@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma');
+const prisma = require('../utils/lib/prisma');
 
 async function findAll(page = 1, pageSize = 12) {
   const job = await prisma.job.findMany({

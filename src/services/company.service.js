@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma');
+const prisma = require('../utils/lib/prisma');
 
 async function create(data) {
   const { name } = data;
