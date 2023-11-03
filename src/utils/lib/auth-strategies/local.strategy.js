@@ -12,13 +12,13 @@ const localStrategy = new LocalStrategy(
       const user = await userService.findByEmail(username);
 
       if (!user) {
-        return cb(null, false, { message: 'Incorrect enmail or password.' });
+        return cb(null, false, { message: 'Incorrect email or password.' });
       }
 
       const compare = await bcrypt.compare(password, user.password);
 
       if (!compare) {
-        return cb(null, false, { message: 'Incorrect enmail or password.' });
+        return cb(null, false, { message: 'Incorrect email or password.' });
       }
 
       return cb(null, user);

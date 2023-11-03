@@ -1,6 +1,6 @@
 function authenticated(req, res, next) {
-  if (!req.user) {
-    return res.render('home');
+  if (!req.isAuthenticated()) {
+    return res.send('Not authenticated');
   }
   next();
 }

@@ -8,9 +8,10 @@ dotEnv.config({
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const { logger } = require('./utils');
-const { passport, prisma } = require('./utils/lib');
+const { prisma } = require('./utils/lib');
 const {
   authRoutes,
   jobRoutes,
@@ -26,13 +27,25 @@ const host = process.env.APP_URL;
 // Middlewares
 app.use(
   cors({
-    allowedHeaders: '*',
-    origin: '*',
+    allowedHeaders: ['Accept', 'Content-Type'],
+    credentials: true,
+    origin: 'http://localhost:5173',
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
 app.use(logger);
-app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+
+const { passport } = require('./utils/lib');
+
 app.use(passport.initialize());
 app.use(passport.session());
 

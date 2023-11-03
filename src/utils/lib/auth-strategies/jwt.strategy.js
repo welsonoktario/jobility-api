@@ -3,7 +3,7 @@ const { userService } = require('../../../services');
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.SECRET_KEY,
+  secretOrKey: process.env.JWT_SECRET,
 };
 
 // eslint-disable-next-line camelcase

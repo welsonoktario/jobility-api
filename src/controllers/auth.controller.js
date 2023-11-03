@@ -4,7 +4,7 @@ const passport = require('passport');
 const { userService } = require('../services');
 const exclude = require('../utils/exclude');
 
-const secretKey = process.env.SECRET_KEY;
+const secretKey = process.env.JWT_SECRET;
 
 async function login(req, res, next) {
   passport.authenticate('local', (err, user, info) => {
@@ -56,7 +56,7 @@ async function loginJwt(req, res, next) {
           return res.status(500).json({ status: 'fail', message: 'Authentication failed' });
         }
 
-        const token = jwt.sign({ fullname: user.fullname }, process.env.SECRET_KEY, {
+        const token = jwt.sign({ fullname: user.fullname }, process.env.JWT_SECRET, {
           expiresIn: '1h',
         });
 
@@ -70,6 +70,13 @@ async function loginJwt(req, res, next) {
       })(req, res);
     });
   })(req, res, next);
+}
+
+function check(req, res) {
+  return res.status(200).json({
+    status: 'ok',
+    data: req.user,
+  });
 }
 
 /* async function loginJWT(req, res) {
@@ -196,5 +203,6 @@ async function register(req, res) {
 module.exports = {
   login,
   loginJwt,
+  check,
   register,
 };

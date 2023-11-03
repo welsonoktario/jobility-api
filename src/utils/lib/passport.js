@@ -6,11 +6,13 @@ passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  if (user) {
+    done(null, user.id);
+  }
 });
 
-passport.deserializeUser((id, done) => {
-  const user = userService.find(id);
+passport.deserializeUser(async (id, done) => {
+  const user = await userService.find(id);
   done(null, user);
 });
 
