@@ -23,13 +23,14 @@ const {
 const app = express();
 const port = process.env.port || process.env.APP_PORT;
 const host = process.env.APP_URL;
+const allowedDomains = process.env.ALLOWED_DOMAIN;
 
 // Middlewares
 app.use(
   cors({
     allowedHeaders: ['Accept', 'Content-Type'],
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin: allowedDomains ? allowedDomains.split(';') : '*',
   }),
 );
 app.use(express.json());
