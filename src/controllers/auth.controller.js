@@ -4,8 +4,6 @@ const passport = require('passport');
 const { userService } = require('../services');
 const exclude = require('../utils/exclude');
 
-const secretKey = process.env.JWT_SECRET;
-
 async function login(req, res, next) {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
@@ -158,26 +156,9 @@ async function register(req, res) {
       password: passwordHash,
     });
 
-    const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
-
-    // eslint-disable-next-line max-len
-    const {
-      id,
-      profilePicture,
-      gender,
-      disabilityId,
-      skills,
-      experience,
-      certification,
-      preferredJob,
-      linkedAccounts,
-      contact,
-      cv,
-    } = user;
-
-    res.status(200).json({
-      status: 'ok',
-      user: {
+    passport.authenticate('local')(req, res, () => {
+      // eslint-disable-next-line max-len
+      const {
         id,
         profilePicture,
         gender,
@@ -189,15 +170,47 @@ async function register(req, res) {
         linkedAccounts,
         contact,
         cv,
-      },
-      token,
+      } = user;
+
+      return res.status(200).json({
+        status: 'ok',
+        data: {
+          id,
+          profilePicture,
+          gender,
+          disabilityId,
+          skills,
+          experience,
+          certification,
+          preferredJob,
+          linkedAccounts,
+          contact,
+          cv,
+        },
+      });
     });
+
+    // const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       status: 'fail',
       message: err.message,
     });
   }
+}
+
+function logout(req, res, next) {
+  req.logout((err) => {
+    if (err) {
+      req.log.error(err);
+      return next(err);
+    }
+
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Logout success',
+    });
+  });
 }
 
 module.exports = {
@@ -205,4 +218,5 @@ module.exports = {
   loginJwt,
   check,
   register,
+  logout,
 };
