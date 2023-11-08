@@ -5,6 +5,7 @@ dotEnv.config({
   path: `.env.${env}`, // .env.development or .env.production based on NODE_ENV
 });
 
+const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -23,11 +24,7 @@ const {
 const app = express();
 const port = process.env.port || process.env.APP_PORT;
 const host = process.env.APP_URL;
-const allowedDomains = [
-  'http://localhost:5173',
-  'https://jobility.technivine.com',
-  'http://jobility.technivine.com',
-]; // process.env.ALLOWED_DOMAIN;
+const allowedDomains = process.env.ALLOWED_DOMAIN;
 
 // Middlewares
 app.use(
@@ -35,7 +32,7 @@ app.use(
     allowedHeaders: ['Accept', 'Content-Type'],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials: true,
-    origin: allowedDomains, // ? allowedDomains.split(';') : '*',
+    origin: allowedDomains ? allowedDomains.split(';') : '*',
   }),
 );
 app.use(express.json());
@@ -45,8 +42,13 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000,
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   }),
 );
 
