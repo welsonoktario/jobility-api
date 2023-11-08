@@ -1,8 +1,8 @@
-const env = process.env.NODE_ENV.toLocaleLowerCase();
+const env = process.env.NODE_ENV;
 const dotEnv = require('dotenv');
 
 dotEnv.config({
-  path: `.env.${env}`, // .env.development or .env.production based on NODE_ENV
+  path: env ? `.env.${env.toLowerCase()}` : '.env', // .env.development or .env.production based on NODE_ENV, default to .env
 });
 
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
@@ -10,9 +10,7 @@ const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const log4js = require('log4js');
 
-const logger = require('./utils/logger');
 const { prisma } = require('./utils/lib');
 const {
   authRoutes,
@@ -24,7 +22,6 @@ const {
 
 const app = express();
 const port = process.env.port || process.env.APP_PORT;
-const host = process.env.APP_URL;
 const allowedDomains = process.env.ALLOWED_DOMAIN;
 
 // Middlewares
@@ -38,16 +35,18 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use(log4js.connectLogger(logger, { level: 'auto' }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: {
-      domain: 'localhost',
+      domain: 'technivine.com',
       maxAge: 1000 * 60 * 60 * 24,
+      secure: true,
+      sameSite: 'none',
+      httpOnly: true,
     },
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: true,
@@ -72,16 +71,12 @@ app.use('/company', companyRoutes);
 prisma
   .$connect()
   .then(() => {
-    logger.info('Connection has been established successfully.');
-
     if (env === 'production') {
       app.listen();
     } else {
-      app.listen(port, () => {
-        logger.info(`Server running on: ${host}:${port}`);
-      });
+      app.listen(port);
     }
   })
   .catch((err) => {
-    logger.error(err.message);
+    throw new Error(err.message);
   });
