@@ -10,8 +10,9 @@ const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const log4js = require('log4js');
 
-const { logger } = require('./utils');
+const { httpLogger, consoleLogger } = require('./utils/logger');
 const { prisma } = require('./utils/lib');
 const {
   authRoutes,
@@ -37,11 +38,14 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use(logger);
+app.use(log4js.connectLogger(httpLogger, { level: 'auto' }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
+    cookie: {
+      domain: 'localhost',
+      maxAge: 1000 * 60 * 60 * 24,
+    },
     resave: true,
     saveUninitialized: true,
     store: new PrismaSessionStore(prisma, {
@@ -68,16 +72,16 @@ app.use('/company', companyRoutes);
 prisma
   .$connect()
   .then(() => {
-    console.log('Connection has been established successfully.');
+    consoleLogger.info('Connection has been established successfully.');
 
     if (env === 'production') {
       app.listen();
     } else {
       app.listen(port, () => {
-        console.log(`Server running on: ${host}:${port}`);
+        consoleLogger.info(`Server running on: ${host}:${port}`);
       });
     }
   })
   .catch((err) => {
-    console.error(err);
+    consoleLogger.error(err.message);
   });

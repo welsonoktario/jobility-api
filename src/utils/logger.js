@@ -1,50 +1,41 @@
-const path = require('path');
-const fs = require('fs');
-const pino = require('pino');
+const log4js = require('log4js');
 
-const logDirectory = './logs';
-
-// Ensure the log directory exists
-if (!fs.existsSync(logDirectory)) {
-  fs.mkdirSync(logDirectory);
-}
-
-function formatDateAndTime() {
-  const now = new Date();
-
-  const year = now.getFullYear();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const hours = now.getHours().toString().padStart(2, '0');
-
-  const formattedDateAndTime = `${year}${month}${day}-${hours}`;
-
-  return formattedDateAndTime;
-}
-
-const transport = pino.transport({
-  targets: [
-    {
-      level: 'trace',
-      target: 'pino-pretty',
-      options: {
-        destination: path.join(logDirectory, `${formatDateAndTime()}.log`),
-        colorize: false,
-        ignore: 'reqId',
-      },
+log4js.configure({
+  appenders: {
+    access: {
+      type: 'dateFile',
+      filename: 'logs/access.log',
+      pattern: '-yyyy-MM-dd',
+      category: 'http',
     },
-    {
-      level: 'trace',
-      target: 'pino-pretty',
-      options: { destination: 1, colorize: true, ignore: 'reqId' },
+    app: {
+      type: 'file',
+      filename: 'logs/app.log',
+      maxLogSize: 10485760,
+      numBackups: 3,
     },
-  ],
+    console: { type: 'console' },
+    errorFile: {
+      type: 'file',
+      filename: 'logs/errors.log',
+    },
+    errors: {
+      type: 'logLevelFilter',
+      level: 'ERROR',
+      appender: 'errorFile',
+    },
+  },
+  categories: {
+    default: { appenders: ['app', 'errors'], level: 'DEBUG' },
+    http: { appenders: ['access'], level: 'DEBUG' },
+    console: { appenders: ['console'], level: 'info' },
+  },
 });
 
-const logger = require('pino-http')({
-  logger: pino(transport),
-  useLevel: 'info',
-  quietReqLogger: true,
-});
+const httpLogger = log4js.getLogger('http');
+const consoleLogger = log4js.getLogger('console');
 
-module.exports = logger;
+module.exports = {
+  httpLogger,
+  consoleLogger,
+};

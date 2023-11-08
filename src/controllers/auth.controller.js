@@ -202,7 +202,6 @@ async function register(req, res) {
 function logout(req, res, next) {
   req.logout((err) => {
     if (err) {
-      req.log.error(err);
       return next(err);
     }
 
