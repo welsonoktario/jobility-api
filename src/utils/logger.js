@@ -6,36 +6,13 @@ log4js.configure({
       type: 'dateFile',
       filename: 'logs/access.log',
       pattern: '-yyyy-MM-dd',
-      category: 'http',
-    },
-    app: {
-      type: 'file',
-      filename: 'logs/app.log',
-      maxLogSize: 10485760,
-      numBackups: 3,
-    },
-    console: { type: 'console' },
-    errorFile: {
-      type: 'file',
-      filename: 'logs/errors.log',
-    },
-    errors: {
-      type: 'logLevelFilter',
-      level: 'ERROR',
-      appender: 'errorFile',
     },
   },
   categories: {
-    default: { appenders: ['app', 'errors'], level: 'DEBUG' },
-    http: { appenders: ['access'], level: 'DEBUG' },
-    console: { appenders: ['console'], level: 'info' },
+    default: { appenders: ['access'], level: 'DEBUG' },
   },
 });
 
-const httpLogger = log4js.getLogger('http');
-const consoleLogger = log4js.getLogger('console');
+const logger = log4js.getLogger('http');
 
-module.exports = {
-  httpLogger,
-  consoleLogger,
-};
+module.exports = logger;

@@ -12,7 +12,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const log4js = require('log4js');
 
-const { httpLogger, consoleLogger } = require('./utils/logger');
+const logger = require('./utils/logger');
 const { prisma } = require('./utils/lib');
 const {
   authRoutes,
@@ -38,7 +38,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use(log4js.connectLogger(httpLogger, { level: 'auto' }));
+app.use(log4js.connectLogger(logger, { level: 'auto' }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -72,16 +72,16 @@ app.use('/company', companyRoutes);
 prisma
   .$connect()
   .then(() => {
-    consoleLogger.info('Connection has been established successfully.');
+    logger.info('Connection has been established successfully.');
 
     if (env === 'production') {
       app.listen();
     } else {
       app.listen(port, () => {
-        consoleLogger.info(`Server running on: ${host}:${port}`);
+        logger.info(`Server running on: ${host}:${port}`);
       });
     }
   })
   .catch((err) => {
-    consoleLogger.error(err.message);
+    logger.error(err.message);
   });
