@@ -23,14 +23,19 @@ const {
 const app = express();
 const port = process.env.port || process.env.APP_PORT;
 const host = process.env.APP_URL;
-const allowedDomains = process.env.ALLOWED_DOMAIN;
+const allowedDomains = [
+  'http://localhost:5173',
+  'https://jobility.technivine.com',
+  'http://jobility.technivine.com',
+]; // process.env.ALLOWED_DOMAIN;
 
 // Middlewares
 app.use(
   cors({
     allowedHeaders: ['Accept', 'Content-Type'],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials: true,
-    origin: allowedDomains ? allowedDomains.split(';') : '*',
+    origin: allowedDomains, // ? allowedDomains.split(';') : '*',
   }),
 );
 app.use(express.json());
