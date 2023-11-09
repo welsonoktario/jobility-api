@@ -1,17 +1,14 @@
-const env = process.env.NODE_ENV;
 const dotEnv = require('dotenv');
 
-dotEnv.config({
-  path: env ? `.env.${env.toLowerCase()}` : '.env', // .env.development or .env.production based on NODE_ENV, default to .env
-});
+dotEnv.config();
 
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
 const { prisma } = require('./utils/lib');
+const { passport } = require('./utils/lib');
 const {
   authRoutes,
   jobRoutes,
@@ -55,8 +52,6 @@ app.use(
   }),
 );
 
-const { passport } = require('./utils/lib');
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -71,10 +66,15 @@ app.use('/company', companyRoutes);
 prisma
   .$connect()
   .then(() => {
-    if (env === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       app.listen();
+      console.log('Server ready');
+    } else if (process.env.NODE_ENV === 'docker') {
+      app.listen(port || 8000, '0.0.0.0');
+      console.log(`Server ready on port ${port}`);
     } else {
-      app.listen(port);
+      app.listen(port || 8000);
+      console.log(`Server ready on port ${port}`);
     }
   })
   .catch((err) => {

@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  mysql:
+    container_name: jobility-db
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: jobility
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_TCP_PORT: 3307
+    ports:
+      - "3307:3307"
+    volumes:
+      - jobility-data:/var/lib/mysql
+  app:
+    env_file: .env.docker
+    container_name: jobility-server
+    command:  >
+      sh -c "npm run docker:migrate &&
+             npm run generate &&
+             npm run docker:start"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+volumes:
+  jobility-data:
