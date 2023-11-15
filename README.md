@@ -36,6 +36,7 @@
 2. Configure the `.env.development` and `.env.production` files.
 3. Run `npm install`.
 4. Run `npx prisma generate`.
+4. Run `npx prisma db seed`.
 5. Run `npm run dev`.
 
 ## How to Run in a Container
