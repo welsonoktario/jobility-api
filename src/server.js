@@ -1,8 +1,8 @@
-const env = process.env.NODE_ENV.toLocaleLowerCase();
+const env = process.env.NODE_ENV?.toLocaleLowerCase();
 const dotEnv = require('dotenv');
 
 dotEnv.config({
-  path: `.env.${env}`, // .env.development or .env.production based on NODE_ENV
+  path: `.env.${env}` ?? '.env', // .env.development or .env.production based on NODE_ENV
 });
 
 const express = require('express');

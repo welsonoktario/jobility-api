@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum Gender {
@@ -45,7 +46,7 @@ model User {
   fullname       String
   profilePicture String?
   gender         Gender?
-  disability     Disability?    @relation(fields: [disabilityId], references: [id])
+  disability     Disability?   @relation(fields: [disabilityId], references: [id])
   disabilityId   Int?
   skills         String?
   education      String?
@@ -79,12 +80,12 @@ model Application {
 model Job {
   id            Int           @id @default(autoincrement())
   title         String
-  description   String
+  description   String        @db.Text
   type          JobType
   system        JobSystem
   location      String
   salary        Int
-  requirement   String?
+  requirement   String?       @db.Text
   datePosted    DateTime
   dateClosed    DateTime?
   jobcategory   JobCategory   @relation(fields: [jobcategoryId], references: [id])
@@ -92,7 +93,7 @@ model Job {
   company       Company       @relation(fields: [companyId], references: [id])
   companyId     Int
   Application   Application[]
-  disability    Disability?    @relation(fields: [disabilityId], references: [id])
+  disability    Disability?   @relation(fields: [disabilityId], references: [id])
   disabilityId  Int?
 
   @@map("jobs")
@@ -122,7 +123,7 @@ model Company {
 
 model Disability {
   id   Int    @id @default(autoincrement())
-  name String 
+  name String
   User User[]
   Job  Job[]
 

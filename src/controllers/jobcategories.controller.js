@@ -9,9 +9,7 @@ async function findAll(req, res) {
       res.status(200).json({
         status: 'ok',
         msg: 'Successfully retrieved job categories data',
-        data: {
-          jobcategory,
-        },
+        data: jobcategory,
       });
     }
   } catch (err) {

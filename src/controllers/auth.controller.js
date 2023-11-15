@@ -4,6 +4,10 @@ const { userService } = require('../services');
 
 const secretKey = process.env.SECRET_KEY;
 
+/* async function check(req, res) {
+  const user = jwt.verify(req.header.Authorization, process.env.JWT_SECRET);
+} */
+
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function login(req, res) {
   try {
@@ -21,40 +25,14 @@ async function login(req, res) {
       throw new Error('Invalid Credential');
     }
 
-    const { fullname } = user;
-
-    const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
-
-    const {
-      id,
-      profilePicture,
-      gender,
-      disabilityId,
-      skills,
-      experience,
-      certification,
-      preferredJob,
-      linkedAccounts,
-      contact,
-      cv,
-    } = user;
+    const token = jwt.sign(user, secretKey, { expiresIn: '1h' });
 
     res.status(200).json({
       status: 'ok',
-      user: {
-        id,
-        profilePicture,
-        gender,
-        disabilityId,
-        skills,
-        experience,
-        certification,
-        preferredJob,
-        linkedAccounts,
-        contact,
-        cv,
+      data: {
+        user,
+        token,
       },
-      token,
     });
   } catch (err) {
     res.status(500).json({
@@ -84,27 +62,14 @@ async function register(req, res) {
       password: passwordHash,
     });
 
-    const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
-
-    // eslint-disable-next-line max-len
-    const { id, profilePicture, gender, disabilityId, skills, experience, certification, preferredJob, linkedAccounts, contact, cv } = user;
+    const token = jwt.sign(user, secretKey, { expiresIn: '1h' });
 
     res.status(200).json({
       status: 'ok',
-      user: {
-        id,
-        profilePicture,
-        gender,
-        disabilityId,
-        skills,
-        experience,
-        certification,
-        preferredJob,
-        linkedAccounts,
-        contact,
-        cv,
+      data: {
+        user,
+        token,
       },
-      token,
     });
   } catch (err) {
     res.status(500).json({
@@ -115,6 +80,7 @@ async function register(req, res) {
 }
 
 module.exports = {
+  // check,
   login,
   register,
 };

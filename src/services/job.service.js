@@ -1,9 +1,15 @@
 const prisma = require('../config/prisma');
 
-async function findAll(page = 1, pageSize = 12) {
+async function findAll(page = 1, pageSize = 12, orderBy = null) {
   const job = await prisma.job.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
+    include: {
+      company: true,
+      disability: true,
+      jobcategory: true,
+    },
+    orderBy,
   });
 
   const totalJobs = await prisma.job.count();
@@ -29,12 +35,17 @@ async function find(id) {
     where: {
       id: jobId,
     },
+    include: {
+      company: true,
+      disability: true,
+      jobcategory: true,
+    },
   });
 
   return job;
 }
 
-async function search(filters, page = 1, pageSize = 12) {
+async function search(filters, page = 1, pageSize = 12, sortBy = null) {
   const whereClause = {};
 
   if (!filters) return findAll();
@@ -71,6 +82,12 @@ async function search(filters, page = 1, pageSize = 12) {
     where: whereClause,
     skip: (page - 1) * pageSize,
     take: pageSize,
+    include: {
+      company: true,
+      disability: true,
+      jobcategory: true,
+    },
+    orderBy: sortBy,
   });
 
   const totalJobs = await prisma.job.count();
