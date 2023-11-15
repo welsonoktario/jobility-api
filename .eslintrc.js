@@ -13,5 +13,6 @@ module.exports = {
     'object-curly-newline': 'off',
     'no-trailing-spaces': 'warn',
     'object-shorthand': 'warn',
+    'linebreak-style': 'off',
   },
 };

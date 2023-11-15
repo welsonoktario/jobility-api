@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { userService } = require('../services');
+
+const secretKey = process.env.SECRET_KEY;
 
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function login(req, res) {
@@ -7,25 +10,56 @@ async function login(req, res) {
     const { email, password } = req.body;
 
     const user = await userService.findByEmail(email);
+
+    if (!user) {
+      throw new Error('Invalid Credential');
+    }
+
     const compare = await bcrypt.compare(password, user.password);
 
     if (!compare) {
-      res.status(200).json({
-        status: 'fail',
-        msg: 'Wrong email or password',
-      });
+      throw new Error('Invalid Credential');
     }
+
+    const { fullname } = user;
+
+    const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
+
+    const {
+      id,
+      profilePicture,
+      gender,
+      disabilityId,
+      skills,
+      experience,
+      certification,
+      preferredJob,
+      linkedAccounts,
+      contact,
+      cv,
+    } = user;
 
     res.status(200).json({
       status: 'ok',
-      data: {
-        user,
+      user: {
+        id,
+        profilePicture,
+        gender,
+        disabilityId,
+        skills,
+        experience,
+        certification,
+        preferredJob,
+        linkedAccounts,
+        contact,
+        cv,
       },
+      token,
     });
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
@@ -33,7 +67,7 @@ async function login(req, res) {
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function register(req, res) {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { fullname, email, password } = req.body;
 
     const exists = await userService.findByEmail(email);
 
@@ -43,23 +77,39 @@ async function register(req, res) {
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
+
     const user = await userService.create({
-      firstName,
-      lastName,
+      fullname,
       email,
       password: passwordHash,
     });
 
+    const token = jwt.sign({ fullname }, secretKey, { expiresIn: '1h' });
+
+    // eslint-disable-next-line max-len
+    const { id, profilePicture, gender, disabilityId, skills, experience, certification, preferredJob, linkedAccounts, contact, cv } = user;
+
     res.status(200).json({
       status: 'ok',
-      data: {
-        user,
+      user: {
+        id,
+        profilePicture,
+        gender,
+        disabilityId,
+        skills,
+        experience,
+        certification,
+        preferredJob,
+        linkedAccounts,
+        contact,
+        cv,
       },
+      token,
     });
   } catch (err) {
     res.status(500).json({
       status: 'fail',
-      msg: err.message,
+      message: err.message,
     });
   }
 }
