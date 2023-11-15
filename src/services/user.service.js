@@ -24,11 +24,11 @@ async function findByEmail(email) {
     },
   });
 
-  if (user) {
-    return exclude(user, ['password', 'createdAt', 'updatedAt', 'deletedAt']);
+  if (!user) {
+    return null;
   }
 
-  return null;
+  return user;
 }
 
 async function create(data) {

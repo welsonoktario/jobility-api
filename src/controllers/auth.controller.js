@@ -1,19 +1,42 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { userService } = require('../services');
+const { exclude } = require('../utils');
 
-const secretKey = process.env.SECRET_KEY;
+const secretKey = process.env.JWT_SECRET;
 
-/* async function check(req, res) {
-  const user = jwt.verify(req.header.Authorization, process.env.JWT_SECRET);
-} */
+async function check(req, res) {
+  try {
+    if (!req.headers.authorization) {
+      return res.status(200).json({
+        status: 'ok',
+        data: null,
+      });
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    const user = jwt.verify(token, secretKey);
+
+    return res.status(200).json({
+      status: 'ok',
+      data: user,
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      status: 'fail',
+      message: err.message,
+    });
+  }
+}
 
 // Pindahin logic ini ke service? (ex: auth.service.js)
 async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await userService.findByEmail(email);
+    let user = await userService.findByEmail(email);
 
     if (!user) {
       throw new Error('Invalid Credential');
@@ -25,6 +48,7 @@ async function login(req, res) {
       throw new Error('Invalid Credential');
     }
 
+    user = exclude(user, ['password', 'createdAt', 'updatedAt', 'deletedAt']);
     const token = jwt.sign(user, secretKey, { expiresIn: '1h' });
 
     res.status(200).json({
@@ -35,6 +59,7 @@ async function login(req, res) {
       },
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       status: 'fail',
       message: err.message,
@@ -80,7 +105,7 @@ async function register(req, res) {
 }
 
 module.exports = {
-  // check,
+  check,
   login,
   register,
 };
