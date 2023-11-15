@@ -8,7 +8,6 @@ dotEnv.config({
 const express = require('express');
 const cors = require('cors');
 
-const { logger } = require('./utils');
 const { prisma } = require('./config');
 const {
   authRoutes,
@@ -30,7 +29,6 @@ app.use(
   }),
 );
 app.use(express.json());
-app.use(logger);
 
 // Routing
 app.use('/auth', authRoutes);
@@ -54,6 +52,5 @@ prisma
     }
   })
   .catch((err) => {
-    logger(err);
     console.error(err);
   });
