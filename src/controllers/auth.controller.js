@@ -24,8 +24,9 @@ async function check(req, res) {
   } catch (err) {
     console.error(err);
 
-    return res.status(500).json({
-      status: 'fail',
+    return res.status(200).json({
+      status: 'ok',
+      data: null,
       message: err.message,
     });
   }
