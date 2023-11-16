@@ -53,20 +53,17 @@ async function search(req, res) {
     const pageSize = parseInt(req.query.pageSize, 10) || 12;
 
     const job = await jobService.search(filters, page, pageSize);
-    if (job.data.length === 0) {
-      throw new Error('No jobs found');
-    } else {
-      res.status(200).json({
-        status: 'ok',
-        data: {
-          data: job.data,
-          totalData: job.totalJobs,
-          dataPerPage: job.jobsPerPage,
-          currentPage: job.currentPage,
-          totalPages: job.totalPages,
-        },
-      });
-    }
+
+    res.status(200).json({
+      status: 'ok',
+      data: {
+        data: job.data,
+        totalData: job.totalJobs,
+        dataPerPage: job.jobsPerPage,
+        currentPage: job.currentPage,
+        totalPages: job.totalPages,
+      },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({

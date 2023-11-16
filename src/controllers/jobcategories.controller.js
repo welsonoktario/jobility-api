@@ -3,15 +3,12 @@ const { jobcategoriesService } = require('../services');
 async function findAll(req, res) {
   try {
     const jobcategory = await jobcategoriesService.findAll();
-    if (jobcategory.length === 0) {
-      throw new Error('No job categories found');
-    } else {
-      res.status(200).json({
-        status: 'ok',
-        msg: 'Successfully retrieved job categories data',
-        data: jobcategory,
-      });
-    }
+
+    res.status(200).json({
+      status: 'ok',
+      msg: 'Successfully retrieved job categories data',
+      data: jobcategory,
+    });
   } catch (err) {
     res.status(500).json({
       status: 'fail',

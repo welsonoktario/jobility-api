@@ -4,10 +4,6 @@ async function findAll(req, res) {
   try {
     const applications = await applicationService.findAll();
 
-    if (applications.length === 0) {
-      throw new Error('No applications found');
-    }
-
     res.status(200).json({
       status: 'ok',
       msg: 'Successfully retrieved applications data',
