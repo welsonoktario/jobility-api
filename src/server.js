@@ -24,8 +24,7 @@ const host = process.env.APP_URL;
 // Middlewares
 app.use(
   cors({
-    allowedHeaders: '*',
-    origin: '*',
+    origin: process.env.ALLOWED_DOMAINS?.split(';') || '*',
   }),
 );
 app.use(express.json());
