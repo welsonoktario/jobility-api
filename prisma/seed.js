@@ -39,12 +39,24 @@ async function main() {
     },
   });
 
-  await prisma.disability.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      name: 'Deafblindness',
-    },
+  const disabilities = [
+    { value: 1, label: 'Color Blindness' },
+    { value: 2, label: 'Partial Blindness' },
+    { value: 3, label: 'Full Blindness' },
+    { value: 4, label: 'Dyslexia' },
+    { value: 5, label: 'Hearing Loss' },
+    { value: 6, label: 'Deafness' },
+    { value: 7, label: 'Physical Impairment' },
+  ];
+
+  disabilities.forEach(async (disability) => {
+    await prisma.disability.upsert({
+      where: { id: disability.value },
+      update: {},
+      create: {
+        name: disability.label,
+      },
+    });
   });
 
   await prisma.jobCategory.upsert({
@@ -70,7 +82,7 @@ async function main() {
             description: 'We are looking for a project manager to join our team.',
             type: 'Internship',
             system: 'Remote',
-            location: 'Singapore',
+            location: 'Jakarta, Indonesia',
             salary: 3000000,
             datePosted: new Date(),
             companyId: 2,
@@ -93,7 +105,7 @@ async function main() {
             description: 'We are looking for an accountant to join our team.',
             type: 'Fulltime',
             system: 'Onsite',
-            location: 'Jakarta, Indonesia',
+            location: 'Surabaya, Indonesia',
             salary: 4000000,
             datePosted: new Date(),
             companyId: 1,
@@ -104,7 +116,7 @@ async function main() {
             description: 'We are looking for a financial analyst to join our team.',
             type: 'Internship',
             system: 'Remote',
-            location: 'Singapore',
+            location: 'Surabaya, Indonesia',
             salary: 3000000,
             datePosted: new Date(),
             companyId: 2,
@@ -127,7 +139,7 @@ async function main() {
             description: 'We are looking for a manager to join our team.',
             type: 'Fulltime',
             system: 'Onsite',
-            location: 'Jakarta, Indonesia',
+            location: 'Bandung, Indonesia',
             salary: 4000000,
             datePosted: new Date(),
             companyId: 1,
@@ -138,7 +150,7 @@ async function main() {
             description: 'We are looking for a director to join our team.',
             type: 'Internship',
             system: 'Remote',
-            location: 'Singapore',
+            location: 'Bandung, Indonesia',
             salary: 3000000,
             datePosted: new Date(),
             companyId: 2,
