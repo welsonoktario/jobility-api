@@ -1,5 +1,9 @@
-const logger = require('./logger');
+const exclude = require('./exclude');
+const mailer = require('./mailer');
+const verifyToken = require('./verifyJwt');
 
 module.exports = {
-  logger,
+  exclude,
+  mailer: mailer.mailer,
+  verifyToken,
 };

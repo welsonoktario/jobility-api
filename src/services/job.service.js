@@ -1,9 +1,15 @@
 const prisma = require('../config/prisma');
 
-async function findAll(page = 1, pageSize = 12) {
+async function findAll(page = 1, pageSize = 12, orderBy = null) {
   const job = await prisma.job.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
+    include: {
+      company: true,
+      disability: true,
+      jobcategory: true,
+    },
+    orderBy,
   });
 
   const totalJobs = await prisma.job.count();
@@ -29,24 +35,23 @@ async function find(id) {
     where: {
       id: jobId,
     },
+    include: {
+      company: true,
+      disability: true,
+      jobcategory: true,
+    },
   });
 
   return job;
 }
 
-async function search(filters, page = 1, pageSize = 12) {
+async function search(filters, page = 1, pageSize = 12, sortBy = null) {
   const whereClause = {};
 
   if (!filters) return findAll();
 
-  if (filters.title) {
-    whereClause.title = {
-      contains: filters.title,
-    };
-  }
-
-  if (filters.companyId) {
-    whereClause.companyId = parseInt(filters.companyId, 10);
+  if (filters.query) {
+    whereClause.title = { contains: filters.query };
   }
 
   if (filters.location) {
@@ -55,22 +60,40 @@ async function search(filters, page = 1, pageSize = 12) {
     };
   }
 
-  if (filters.disabilityId) {
-    whereClause.disabilityId = parseInt(filters.disabilityId, 10);
+  if (filters.specialization) {
+    whereClause.jobcategoryId = {
+      equals: Number(filters.specialization),
+    };
   }
 
-  if (filters.type) {
-    whereClause.type = filters.type;
+  if (filters.disabilities) {
+    whereClause.disabilityId = {
+      in: filters.disabilities.split(',').map((val) => Number(val)),
+    };
   }
 
-  if (filters.system) {
-    whereClause.system = filters.system;
+  if (filters.jobTypes) {
+    whereClause.type = {
+      in: filters.jobTypes.split(','),
+    };
+  }
+
+  if (filters.jobSystems) {
+    whereClause.system = {
+      in: filters.jobSystems.split(','),
+    };
   }
 
   const job = await prisma.job.findMany({
     where: whereClause,
     skip: (page - 1) * pageSize,
     take: pageSize,
+    include: {
+      company: true,
+      disability: true,
+      jobcategory: true,
+    },
+    orderBy: sortBy,
   });
 
   const totalJobs = await prisma.job.count();

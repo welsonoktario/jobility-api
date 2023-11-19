@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { mailer } = require('../utils');
 
 async function findAll() {
   const applications = await prisma.application.findMany();
@@ -30,6 +31,13 @@ async function create(data) {
       jobId,
       userId,
     },
+    include: {
+      job: {
+        include: {
+          company: true,
+        },
+      },
+    },
   });
 
   if (isExists) {
@@ -38,6 +46,39 @@ async function create(data) {
 
   const application = await prisma.application.create({
     data,
+    include: {
+      user: true,
+      job: {
+        include: {
+          company: true,
+        },
+      },
+    },
+  });
+
+  mailer.sendMail({
+    // eslint-disable-next-line quotes
+    from: `"Jobility" <no-reply@jobility.test>`,
+    to: application.job.company.contact,
+    subject: 'You have a new job applicant!',
+    text: `
+      <p>Hi ${application.job.company},</p>
+
+      <p>You have a new job applicant for "${application.job.title}" job.</p>
+      <p>The applicant detail is:</p>
+      <p>
+          Name: ${application.user.fullname}<br>
+          Email: ${application.user.email}
+      </p>
+
+      Please to contact the applicant's through email provided to<br>
+      continue the application process.
+
+      <p>
+        Regards,<br>
+        Jobility
+      </p>
+    `,
   });
 
   return application;

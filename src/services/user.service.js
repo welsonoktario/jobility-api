@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { exclude } = require('../utils');
 
 async function findAll() {
   const users = await prisma.user.findMany();
@@ -13,7 +14,7 @@ async function find(id) {
     },
   });
 
-  return user;
+  return exclude(user, ['password', 'createdAt', 'updatedAt', 'deletedAt']);
 }
 
 async function findByEmail(email) {
@@ -23,11 +24,11 @@ async function findByEmail(email) {
     },
   });
 
-  if (user) {
-    return user;
+  if (!user) {
+    return null;
   }
 
-  return null;
+  return user;
 }
 
 async function create(data) {
@@ -35,7 +36,7 @@ async function create(data) {
     data,
   });
 
-  return user;
+  return exclude(user, ['password', 'createdAt', 'updatedAt', 'deletedAt']);
 }
 
 async function update(id, data) {
