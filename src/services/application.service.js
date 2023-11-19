@@ -61,8 +61,8 @@ async function create(data) {
     from: `"Jobility" <no-reply@jobility.test>`,
     to: application.job.company.contact,
     subject: 'You have a new job applicant!',
-    text: `
-      <p>Hi ${application.job.company},</p>
+    html: `
+      <p>Hi ${application.job.company.name},</p>
 
       <p>You have a new job applicant for "${application.job.title}" job.</p>
       <p>The applicant detail is:</p>

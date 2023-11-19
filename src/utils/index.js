@@ -4,6 +4,6 @@ const verifyToken = require('./verifyJwt');
 
 module.exports = {
   exclude,
-  mailer: mailer.mailer,
+  mailer,
   verifyToken,
 };

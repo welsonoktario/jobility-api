@@ -7,7 +7,7 @@ function verifyToken(req, res, next) {
     return res.status(401).json({ message: 'Access denied, token missing' });
   }
 
-  const decoded = jwt.verify(token, process.env.SECRET_KEY);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
   if (!decoded) {
     return res.status(401).json({ message: 'Access denied, invalid token' });
